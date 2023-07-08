@@ -6,11 +6,31 @@
 #include <stdbool.h>
 //#include <regex.h>
 
-#define ñ 164 //valor ascii de la ñ
+
 #define Max_Int 10 // Número máximo de caracteres que puede tener un valor int
 #define Max_Art_Vwndidos 4 // Número máximo de caracteres que puede tener un valor de vendidos de un articulo
 #define Max_Art_Nombre 21 // Número máximo de caracteres que puede tener un nombre de articulo
 #define Max_articulos 10 // Número máximo de articulos por factura
+//Para las vocales acentuadas y la ñ
+enum{
+    ü = 129,
+    é = 130,
+    É = 144,
+    ö = 148,
+    Ö = 153,
+    Ü = 154,
+    á = 160,
+    í = 161,
+    ú = 163,
+    ñ = 164,
+    Ñ = 165,
+    Á = 181,
+    Ó = 224,
+    Í = 214,
+    Ú = 233
+};
+
+
 typedef struct Articulo
 {
     int codigo;
@@ -52,6 +72,8 @@ void limpiarStdin();
 void sis_art();
 bool bu_usuario(Usuario *usuario, char *username, char *password);
 void Pantalla_log();
+bool letra_hisp (unsigned x);
+bool esp_caracter (unsigned x);
 
 
 int main(){
@@ -78,8 +100,8 @@ void Pantalla_log(){
                 printf("\b \b");
             }
         } else {
-            if (!isalnum(rep)){
-                printf("El \"%c\" es un caracter inválido", rep);
+            if (!(isalnum(rep) || letra_hisp(rep))){
+                printf("El \"%c\" es un caracter inv%clido", rep, á);
             }
 
             else{
@@ -104,10 +126,16 @@ void Pantalla_log(){
                 printf("\b \b");
             }
         } else {
-            if ( i < 20){
+            if (!(isalnum(rep) || letra_hisp(rep) || esp_caracter(rep))){
+                printf("El \"%c\" es un caracter inv%clido", rep, á);
+            }
+
+            else{
+                if ( i < 20){
                 printf("*");
-            password[i] = rep;
-            i++;
+                password[i] = rep;
+                i++;
+                }
             }
         }
     }
@@ -507,3 +535,18 @@ bool bu_usuario(Usuario *usuario, char *username, char *password){
     }
 }
 
+bool letra_hisp (unsigned x){
+     if ( x>= 160 && x <= 165)
+        return true;
+     if ( x == ü || x == é || x == É || x == ö || x == Ö || x == Ü || x == Á || x == Í || x == Ó || x == Ú)
+        return true;
+     else
+        return false;
+}
+
+bool esp_caracter (unsigned x){
+     if ( x>= 33 && x <= 47)
+        return true;
+     else
+        return false;
+}
