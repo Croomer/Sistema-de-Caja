@@ -6,6 +6,7 @@
 #include <stdbool.h>
 //#include <regex.h>
 
+#define ñ 164 //valor ascii de la ñ
 #define Max_Int 10 // Número máximo de caracteres que puede tener un valor int
 #define Max_Art_Vwndidos 4 // Número máximo de caracteres que puede tener un valor de vendidos de un articulo
 #define Max_Art_Nombre 21 // Número máximo de caracteres que puede tener un nombre de articulo
@@ -25,7 +26,7 @@ typedef struct Factura
     int num_art;
     long long total;
     struct Articulo detalle[Max_articulos];
-    
+
 } Factura;
 
 typedef struct Usuario
@@ -54,9 +55,9 @@ void Pantalla_log();
 
 
 int main(){
-
+    int a = 160;
     Pantalla_log();
-    
+
 
     return 0;
 }
@@ -64,7 +65,7 @@ int main(){
 void Pantalla_log(){
     int i, rep;
     char username[21], password[21];
-    
+
     printf("Ingrese su Usuario:");
     while (rep = getch())
     {
@@ -80,18 +81,18 @@ void Pantalla_log(){
             if (!isalnum(rep)){
                 printf("El \"%c\" es un caracter inválido", rep);
             }
-                
+
             else{
                 if ( i < 20){
                 printf("%c", rep);
-                password[i] = rep;
+                username[i] = rep;
                 i++;
                 }
             }
         }
     }
-    printf("Contraseña:");
-
+    printf("\nContrase%ca:", ñ);
+    i = 0; //Reseteo la variable para el ciclo while
     while (rep = getch())
     {
         if (rep == 13){
@@ -110,14 +111,14 @@ void Pantalla_log(){
             }
         }
     }
-    printf("La contraseña es: %s\n", password);
+    printf("\nLa contrase%ca es:  %s\n", ñ, password);
 }
 
 bool leerFacturas()  {
     FILE* archivo;
-  
+
     archivo = fopen("facturas.txt", "r");
-  
+
     if (archivo == NULL) {
         printf("Aún no hay facturas para leer");
         return false;
@@ -137,7 +138,7 @@ int cast_int(char valor[Max_Int]){
         }
     }
     return atoi(valor);
-    
+
 }
 
 bool val_str(char valor[Max_Int]){
@@ -151,21 +152,21 @@ bool val_str(char valor[Max_Int]){
         }
     }
     return true;
-    
+
 }
 
 bool val_articulo(Articulo *art,
                          char *codigo,
                          char *nombre,
                          char *vendidos,
-                         char *costo_u) {    
+                         char *costo_u) {
     strncpy(art->nombre, nombre, Max_Art_Nombre - 1);
-    
+
     if (!val_str(art->nombre)){
         printf("Fallo en el Nombre.\n");
         return false;
     }
-    
+
     art->codigo = cast_int(codigo);
     art->costo_u = cast_int(costo_u);
     art->vendidos = cast_int(vendidos);
@@ -192,7 +193,7 @@ bool tiene_articulo(Articulo art){
 
 //prerequisito todos los articulos deben ser validos
 bool val_factura(Factura *fact){
-    //TODO: Hacer las vaidaciones de facturas  
+    //TODO: Hacer las vaidaciones de facturas
 
     fact->num_art = 0;
     fact->total = 0;
@@ -212,14 +213,14 @@ bool val_factura(Factura *fact){
 bool sg_articulo(FILE* archivo, Articulo art, Factura fact) {
     if (fprintf(archivo, "%d|%d|%s|%d|%d|%lld\n", fact.id, art.codigo, art.nombre, art.vendidos, art.costo_u, art.subtotal)>1)
         return true;
-    
+
     return false;
 }
 
 bool cout_articulo(FILE* archivo, Articulo art, int fact_id) {
     if (fprintf(archivo, "%d|%d|%s|%d|%d|%lld\n", fact_id, art.codigo, art.nombre, art.vendidos, art.costo_u, art.subtotal)>1)
         return true;
-    
+
     return false;
 }
 
@@ -230,7 +231,7 @@ bool sg_factura(Factura fact){
         return false;
 
     //TODO: escribir una copia del archivo y una vez que la modificación es validada se reemplaza los archivos originales
-    
+
     FILE* rcfacturas;
     FILE* rcdetalle;
     if ((rcfacturas = fopen("facturas.txt", "a")) == NULL)
@@ -255,10 +256,10 @@ bool sg_factura(Factura fact){
         else
             break;
     }
-        
+
     fclose(rcdetalle);
     fclose(rcfacturas);
-    
+
     return ok;
 }
 
@@ -297,7 +298,7 @@ bool bu_articulo(){
 
 bool bu_factura(int id){
     if (id < 0){
-                    
+
         printf("Ha introducido un identificador inválido.\n");
         return false;
     }
@@ -314,10 +315,10 @@ bool bu_factura(int id){
 
         while (!feof(archivo))
         {
-            
+
             if (fscanf(archivo, "%d|%d|%[^|]|%d|%d|%lld\n", &fact_id, &art.codigo, art.nombre, &art.vendidos, &art.costo_u, &art.subtotal) == 6)
             {
-                
+
                 if ((fact_id -1) == id){
                     printf("TOTAL:      %lld\n", total);
                     printf("------------------------------------------------------------------------\n");
@@ -349,7 +350,7 @@ bool bu_factura(int id){
         }
         fclose(archivo);
         if (id > fact_id){
-                    
+
             printf("El identificador no se encuentra asignado a ninguna factura del sistema.\n");
             return false;
         }
@@ -370,7 +371,7 @@ bool car_facturas(){
 
         while (!feof(archivo))
         {
-            
+
             if (fscanf(archivo, "%d|%d|%lld\n", &fact_id, &num_art, &total_fact) == 3)
             {
                     if ( primero == 0)
@@ -436,7 +437,7 @@ void sis_art(){
             case 1:
                 printf("Añada el siguiente articulo.\n");
                 continue;
-            
+
             case 2:
                 if (sg_factura(fact)){
                     printf("Se a guardado correctamente.\n");
@@ -462,8 +463,8 @@ void sis_art(){
         printf("Valor p: %d\n", p);
 
     } while (p == 1);
-    
-        
+
+
         /*else{
             printf("Ha introducido una entrada invalida.\n");
             printf("Desea cancelar el registro.\n");
