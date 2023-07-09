@@ -79,6 +79,9 @@ bool esp_caracter (unsigned x);
 void gotoxy(int x, int y);
 void recuadro(int xs, int ys, int xi, int yi);
 void Pantalla_blank();
+void cargando(int x, int y, int t);
+void ocultarCursor();
+void activarCursor();
 
 
 int main(){
@@ -94,19 +97,60 @@ int main(){
     return 0;
 }
 
+void cargando(int x, int y, int t){
+    int a = 0, i;
+    for(i = 0; i < t; i++){
+        Sleep(100);
+        switch(a){
+        case 0:
+            gotoxy(x, y); printf("%c", 201); //esquina superior izquierda
+            gotoxy(x + 6, y); printf("%c", 187); //esquina superior derecha
+
+            gotoxy(x + 3, y + 2); printf("x");
+
+            gotoxy(x, y + 4); printf("%c", 200);//esquina inferior derecha
+            gotoxy(x + 6, y + 4); printf("%c", 188);//esquina inferior derecha
+            a = 1;
+            Sleep(350);
+            gotoxy(x, y); printf(" "); //esquina superior izquierda
+            gotoxy(x + 6, y); printf(" "); //esquina superior derecha
+            gotoxy(x, y + 4); printf(" ");//esquina inferior derecha
+            gotoxy(x + 6, y + 4); printf(" ");//esquina inferior derecha
+
+        case 1:
+            gotoxy(x + 3, y); printf("%c", 205);
+
+            gotoxy(x, y + 2); printf("%c", 186);
+            gotoxy(x + 3, y + 2); printf("+");
+            gotoxy(x + 6, y + 2); printf("%c", 186);
+
+            gotoxy(x + 3, y + 4); printf("%c", 205);
+            a = 0;
+            Sleep(350);
+            gotoxy(x + 3, y); printf(" ");
+            gotoxy(x, y + 2); printf(" ");
+            gotoxy(x + 6, y + 2); printf(" ");
+            gotoxy(x + 3, y + 4); printf(" ");
+        }
+    }
+}
+
 void Pantalla_log(char *username, char *password){
+    //TODO: Validar Las Flechas
     Pantalla_blank();
     recuadro(28,10,50,12);
     recuadro(28,16,50,18);
     int i = 0, rep;
+    ocultarCursor();
 
     gotoxy(28,9); printf("Ingrese su Usuario:");
     gotoxy(28,15);printf("Contrase%ca:", ñ);
-
+    gotoxy(29,11); //para poner el cursor donde va a escribir el nombre
+    activarCursor();
     while (rep = getch())
     {
-        gotoxy(28, 13); printf("                               ");
         if (rep == 13){
+            ocultarCursor();
             username[i] = '\0';
             if (username[0] != '\0')
                 break;
@@ -117,11 +161,15 @@ void Pantalla_log(char *username, char *password){
                 }
         } else if ( rep == 8){
             if ( i > 0 ){
+                ocultarCursor();
+                gotoxy(28, 13); printf("                               ");
                 i--;
                 gotoxy(29 + i,11); printf(" \b");
+                activarCursor();
             }
         } else {
             if (!(isalnum(rep) || letra_hisp(rep))){
+                ocultarCursor();
                 printf("\033[0;31m");
                 gotoxy(28, 13); printf("El \"%c\" es un caracter inv%clido", rep, á);
                 printf("\033[0m");
@@ -129,11 +177,15 @@ void Pantalla_log(char *username, char *password){
 
             else{
                 if ( i < 20){
+                    ocultarCursor();
+                    gotoxy(28, 13); printf("                               ");
                     gotoxy(29 + i,11);
+                    activarCursor();
                     printf("%c", rep);
                     username[i] = rep;
                     i++;
                 }else {
+                    ocultarCursor();
                     printf("\033[0;31m");
                     gotoxy(28, 13); printf("Alcanz%c el m%cximo de carateres", ó, á);
                     printf("\033[0m");
@@ -143,10 +195,12 @@ void Pantalla_log(char *username, char *password){
     }
 
     i = 0; //Reseteo la variable para el ciclo while
+    gotoxy(29,17); //para poner el cursor donde va a escribir la contraseña
+    activarCursor();
     while (rep = getch())
     {
-        gotoxy(28, 19); printf("                               ");
         if (rep == 13){
+            ocultarCursor();
             password[i] = '\0';
             if (password[0] != '\0')
                 break;
@@ -157,21 +211,29 @@ void Pantalla_log(char *username, char *password){
             }
         } else if ( rep == 8){
             if ( i > 0 ){
+                ocultarCursor();
+                gotoxy(28, 19); printf("                               ");
                 i--;
                 gotoxy(29 + i,17); printf(" \b");
+                activarCursor();
             }
         } else {
             if (!(isalnum(rep) || letra_hisp(rep) || esp_caracter(rep))){
+                ocultarCursor();
                 printf("\033[0;31m");
                 gotoxy(28, 19); printf("El \"%c\" es un caracter inv%clido", rep, á);
                 printf("\033[0m");
             }else{
                 if ( i < 20){
+                    ocultarCursor();
+                    gotoxy(28, 19); printf("                               ");
                     gotoxy(29 + i,17);
+                    activarCursor();
                     printf("*");
                     password[i] = rep;
                     i++;
                 }else {
+                    ocultarCursor();
                     printf("\033[0;31m");
                     gotoxy(28, 19); printf("Alcanz%c el m%cximo de carateres", ó, á);
                     printf("\033[0m");
@@ -179,6 +241,7 @@ void Pantalla_log(char *username, char *password){
             }
         }
     }
+    cargando(36, 20, 2);
     system("cls");
 }
 
@@ -625,4 +688,13 @@ void Pantalla_blank(){
     system("mode con: cols=80 lines=30");
     recuadro(1,1,78,28);
     recuadro(3,2,76,4);
-    gotoxy(32, 3); printf("SISTEMA DE CAJA");}
+    gotoxy(32, 3); printf("SISTEMA DE CAJA");
+    }
+
+void ocultarCursor(){
+    printf("\e[?25l");
+}
+
+void activarCursor(){
+    printf("\e[?25h");
+}
