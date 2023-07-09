@@ -82,11 +82,13 @@ void Rect(int xs, int ys, int xi, int yi);
 
 int main(){
 
+    Usuario user;
     char username[Max_Art_Nombre], password[Max_Art_Nombre];
+    do{
+        Pantalla_log(username, password);
 
-    Pantalla_log(username, password);
-
-
+    } while(!bu_usuario(&user, username, password));
+    printf("Has accedido");
 
     return 0;
 }
@@ -99,6 +101,7 @@ void Pantalla_log(char *username, char *password){
 
     gotoxy(20,9);
     printf("Ingrese su Usuario:");
+    i = 0;
     while (rep = getch())
     {
         gotoxy(48, 11); printf("                              ");
