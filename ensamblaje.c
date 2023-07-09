@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <conio.h>
 #include <stdbool.h>
+#include <windows.h>
 //#include <regex.h>
 
 
@@ -21,6 +22,7 @@ enum{
     Ü = 154,
     á = 160,
     í = 161,
+    ó = 162,
     ú = 163,
     ñ = 164,
     Ñ = 165,
@@ -71,75 +73,87 @@ bool car_facturas();
 void limpiarStdin();
 void sis_art();
 bool bu_usuario(Usuario *usuario, char *username, char *password);
-void Pantalla_log();
+void Pantalla_log(char *username, char *password);
 bool letra_hisp (unsigned x);
 bool esp_caracter (unsigned x);
+void gotoxy(int x, int y);
+void Rect(int xs, int ys, int xi, int yi);
 
 
 int main(){
-    int a = 160;
-    Pantalla_log();
+
+    char username[Max_Art_Nombre], password[Max_Art_Nombre];
+
+    Pantalla_log(username, password);
+
 
 
     return 0;
 }
 
-void Pantalla_log(){
+void Pantalla_log(char *username, char *password){
+    system("mode con: cols=80 lines=25");
+    system("COLOR 70");
+    recuadro(2,0,78,24);
     int i, rep;
-    char username[21], password[21];
 
+    gotoxy(20,9);
     printf("Ingrese su Usuario:");
     while (rep = getch())
     {
+        gotoxy(48, 11); printf("                              ");
         if (rep == 13){
             username[i] = '\0';
             break;
         } else if ( rep == 8){
             if ( i > 0 ){
                 i--;
-                printf("\b \b");
+                gotoxy(23 + i,11); printf(" \b");
             }
         } else {
             if (!(isalnum(rep) || letra_hisp(rep))){
-                printf("El \"%c\" es un caracter inv%clido", rep, á);
+                gotoxy(48, 11); printf("El \"%c\" es un caracter inv%clido", rep, á);
             }
 
             else{
                 if ( i < 20){
-                printf("%c", rep);
-                username[i] = rep;
-                i++;
+                    gotoxy(23 + i,11);
+                    printf("%c", rep);
+                    username[i] = rep;
+                    i++;
+                }else {
+                    gotoxy(48, 11); printf("Alcanz%c el m%cximo de carateres", ó, á);
                 }
             }
         }
     }
-    printf("\nContrase%ca:", ñ);
+    gotoxy(20,13);printf("Contrase%ca:", ñ);
     i = 0; //Reseteo la variable para el ciclo while
     while (rep = getch())
     {
+        gotoxy(48, 15); printf("                              ");
         if (rep == 13){
             password[i] = '\0';
             break;
         } else if ( rep == 8){
             if ( i > 0 ){
                 i--;
-                printf("\b \b");
+                gotoxy(23 + i,15); printf(" \b");
             }
         } else {
             if (!(isalnum(rep) || letra_hisp(rep) || esp_caracter(rep))){
-                printf("El \"%c\" es un caracter inv%clido", rep, á);
-            }
-
-            else{
+                gotoxy(48, 15); printf("El \"%c\" es un caracter inv%clido", rep, á);
+            }else{
                 if ( i < 20){
-                printf("*");
-                password[i] = rep;
-                i++;
+                    gotoxy(23 + i,15);
+                    printf("*");
+                    password[i] = rep;
+                    i++;
                 }
             }
         }
     }
-    printf("\nLa contrase%ca es:  %s\n", ñ, password);
+    system("cls");
 }
 
 bool leerFacturas()  {
@@ -549,4 +563,33 @@ bool esp_caracter (unsigned x){
         return true;
      else
         return false;
+}
+
+void gotoxy(int x, int y){
+    HANDLE hcon;
+    hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD dwPos;
+    dwPos.X = x;
+    dwPos.Y = y;
+    SetConsoleCursorPosition(hcon,dwPos);
+}
+
+void recuadro(int xs, int ys, int xi, int yi){
+    int i;
+    for(i = xs; i <= xi; i++){
+            if (i == xs){
+                gotoxy(i, ys); printf("%c", 201);
+                gotoxy(i, yi); printf("%c", 200);
+            }else if (i == xi){
+                gotoxy(i, ys); printf("%c", 187);
+                gotoxy(i, yi); printf("%c", 188);
+            }else{
+                gotoxy(i, ys); printf("%c", 205);
+                gotoxy(i, yi); printf("%c", 205);
+            }
+    }
+    for(i = ys + 1; i < yi; i++){
+            gotoxy(xs, i); printf("%c", 186);
+            gotoxy(xi, i); printf("%c", 186);
+    }
 }
