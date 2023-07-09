@@ -77,7 +77,8 @@ void Pantalla_log(char *username, char *password);
 bool letra_hisp (unsigned x);
 bool esp_caracter (unsigned x);
 void gotoxy(int x, int y);
-void Rect(int xs, int ys, int xi, int yi);
+void recuadro(int xs, int ys, int xi, int yi);
+void Pantalla_blank();
 
 
 int main(){
@@ -94,64 +95,86 @@ int main(){
 }
 
 void Pantalla_log(char *username, char *password){
-    system("mode con: cols=80 lines=25");
-    system("COLOR 70");
-    recuadro(2,0,78,24);
-    int i, rep;
+    Pantalla_blank();
+    recuadro(28,10,50,12);
+    recuadro(28,16,50,18);
+    int i = 0, rep;
 
-    gotoxy(20,9);
-    printf("Ingrese su Usuario:");
-    i = 0;
+    gotoxy(28,9); printf("Ingrese su Usuario:");
+    gotoxy(28,15);printf("Contrase%ca:", ñ);
+
     while (rep = getch())
     {
-        gotoxy(48, 11); printf("                              ");
+        gotoxy(28, 13); printf("                               ");
         if (rep == 13){
             username[i] = '\0';
-            break;
+            if (username[0] != '\0')
+                break;
+            else{
+                    printf("\033[0;31m");
+                    gotoxy(28, 13); printf("La entrada no puede estar vacia");
+                    printf("\033[0m");
+                }
         } else if ( rep == 8){
             if ( i > 0 ){
                 i--;
-                gotoxy(23 + i,11); printf(" \b");
+                gotoxy(29 + i,11); printf(" \b");
             }
         } else {
             if (!(isalnum(rep) || letra_hisp(rep))){
-                gotoxy(48, 11); printf("El \"%c\" es un caracter inv%clido", rep, á);
+                printf("\033[0;31m");
+                gotoxy(28, 13); printf("El \"%c\" es un caracter inv%clido", rep, á);
+                printf("\033[0m");
             }
 
             else{
                 if ( i < 20){
-                    gotoxy(23 + i,11);
+                    gotoxy(29 + i,11);
                     printf("%c", rep);
                     username[i] = rep;
                     i++;
                 }else {
-                    gotoxy(48, 11); printf("Alcanz%c el m%cximo de carateres", ó, á);
+                    printf("\033[0;31m");
+                    gotoxy(28, 13); printf("Alcanz%c el m%cximo de carateres", ó, á);
+                    printf("\033[0m");
                 }
             }
         }
     }
-    gotoxy(20,13);printf("Contrase%ca:", ñ);
+
     i = 0; //Reseteo la variable para el ciclo while
     while (rep = getch())
     {
-        gotoxy(48, 15); printf("                              ");
+        gotoxy(28, 19); printf("                               ");
         if (rep == 13){
             password[i] = '\0';
-            break;
+            if (password[0] != '\0')
+                break;
+            else{
+                    printf("\033[0;31m");
+                    gotoxy(28, 19); printf("La entrada no puede estar vacia");
+                    printf("\033[0m");
+            }
         } else if ( rep == 8){
             if ( i > 0 ){
                 i--;
-                gotoxy(23 + i,15); printf(" \b");
+                gotoxy(29 + i,17); printf(" \b");
             }
         } else {
             if (!(isalnum(rep) || letra_hisp(rep) || esp_caracter(rep))){
-                gotoxy(48, 15); printf("El \"%c\" es un caracter inv%clido", rep, á);
+                printf("\033[0;31m");
+                gotoxy(28, 19); printf("El \"%c\" es un caracter inv%clido", rep, á);
+                printf("\033[0m");
             }else{
                 if ( i < 20){
-                    gotoxy(23 + i,15);
+                    gotoxy(29 + i,17);
                     printf("*");
                     password[i] = rep;
                     i++;
+                }else {
+                    printf("\033[0;31m");
+                    gotoxy(28, 19); printf("Alcanz%c el m%cximo de carateres", ó, á);
+                    printf("\033[0m");
                 }
             }
         }
@@ -581,18 +604,25 @@ void recuadro(int xs, int ys, int xi, int yi){
     int i;
     for(i = xs; i <= xi; i++){
             if (i == xs){
-                gotoxy(i, ys); printf("%c", 201);
-                gotoxy(i, yi); printf("%c", 200);
+                gotoxy(i, ys); printf("%c", 218);//esqina superior izquierda
+                gotoxy(i, yi); printf("%c", 192);//esquina inferior izquierda
             }else if (i == xi){
-                gotoxy(i, ys); printf("%c", 187);
-                gotoxy(i, yi); printf("%c", 188);
+                gotoxy(i, ys); printf("%c", 191);//esquina superior derecha
+                gotoxy(i, yi); printf("%c", 217);//esquina inferior derecha
             }else{
-                gotoxy(i, ys); printf("%c", 205);
-                gotoxy(i, yi); printf("%c", 205);
+                gotoxy(i, ys); printf("%c", 196);
+                gotoxy(i, yi); printf("%c", 196);
             }
     }
     for(i = ys + 1; i < yi; i++){
-            gotoxy(xs, i); printf("%c", 186);
-            gotoxy(xi, i); printf("%c", 186);
+            gotoxy(xs, i); printf("%c", 179);
+            gotoxy(xi, i); printf("%c", 179);
     }
 }
+
+void Pantalla_blank(){
+    system("cls");
+    system("mode con: cols=80 lines=30");
+    recuadro(1,1,78,28);
+    recuadro(3,2,76,4);
+    gotoxy(32, 3); printf("SISTEMA DE CAJA");}
