@@ -82,19 +82,22 @@ void Pantalla_blank();
 void cargando(int x, int y, int t);
 void ocultarCursor();
 void activarCursor();
-
+void menu(int type);
 
 int main(){
-
+    //TODO: Desactivar modificaciones de la terminal.
     Usuario user;
     char username[Max_Art_Nombre], password[Max_Art_Nombre];
     do{
         Pantalla_log(username, password);
-
     } while(!bu_usuario(&user, username, password));
-    printf("Has accedido");
+
 
     return 0;
+}
+
+void menu(int type){
+
 }
 
 void cargando(int x, int y, int t){
@@ -114,8 +117,10 @@ void cargando(int x, int y, int t){
             Sleep(350);
             gotoxy(x, y); printf(" "); //esquina superior izquierda
             gotoxy(x + 6, y); printf(" "); //esquina superior derecha
+            gotoxy(x + 3, y + 2); printf(" ");
             gotoxy(x, y + 4); printf(" ");//esquina inferior derecha
             gotoxy(x + 6, y + 4); printf(" ");//esquina inferior derecha
+            break;
 
         case 1:
             gotoxy(x + 3, y); printf("%c", 205);
@@ -131,6 +136,7 @@ void cargando(int x, int y, int t){
             gotoxy(x, y + 2); printf(" ");
             gotoxy(x + 6, y + 2); printf(" ");
             gotoxy(x + 3, y + 4); printf(" ");
+            break;
         }
     }
 }
@@ -241,7 +247,7 @@ void Pantalla_log(char *username, char *password){
             }
         }
     }
-    cargando(36, 20, 2);
+    cargando(36, 20, 5);
     system("cls");
 }
 
